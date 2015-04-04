@@ -8,7 +8,6 @@ module Gurunavi
       @access_key = access_key
       @connection = ::Faraday.new(url: 'http://api.gnavi.co.jp') do |conn|
         conn.response :json, :content_type => /\bjson$/
-        conn.response :xml, :content_type => /\bxml$/
 
         conn.use :instrumentation
         conn.adapter ::Faraday.default_adapter
@@ -25,8 +24,16 @@ module Gurunavi
         hit_per_page: 50,
         offset_page: page
       }
-      body = response.body
-      Response.new(body)
+      Response.new(response.body)
+    end
+
+    def search(id:)
+      response = @connection.get '/ver2/RestSearchAPI/', {
+        keyid: @access_key,
+        format: "json",
+        id: id
+      }
+      Response.new(response.body)
     end
   end
 

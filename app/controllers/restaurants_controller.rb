@@ -1,10 +1,10 @@
 require Rails.root.join('lib/gurunavi')
 
 class RestaurantsController < ApplicationController
-  before_action :set_default_lat_and_lng
-  before_action :lat_and_lng_must_be_valid
-  before_action :set_default_page
-  before_action :page_must_be_numeric
+  before_action :set_default_lat_and_lng, only: [:index]
+  before_action :lat_and_lng_must_be_valid, only: [:index]
+  before_action :set_default_page, only: [:index]
+  before_action :page_must_be_numeric, only: [:index]
 
   def index
     client = Gurunavi::Client.new(Rails.application.secrets.gurunavi_api_access_key)
@@ -12,7 +12,17 @@ class RestaurantsController < ApplicationController
     if response.error?
       render partial: 'error', locals: { message: 'API call error' }, status: 500
     else
-      @restaurants = Restaurant.parse_from_gurunavi_response(response)
+      @restaurants = Restaurant.build_list_from_gurunavi_response(response)
+    end
+  end
+
+  def show
+    client = Gurunavi::Client.new(Rails.application.secrets.gurunavi_api_access_key)
+    response = client.search(id: params[:id])
+    if response.error?
+      render partial: 'error', locals: { message: 'API call error' }, status: 500
+    else
+      @restaurant = Restaurant.build_from_gurunavi_response(response)
     end
   end
 
