@@ -15,14 +15,15 @@ module Gurunavi
       end
     end
 
-    def ouen_photo_search(lat:, lng: )
+    def ouen_photo_search(lat:, lng:, page: 1)
       response = @connection.get '/ouen/ver1/PhotoSearch/', {
         keyid: @access_key,
         format: "json",
         latitude: lat,
         longitude: lng,
         range: 1,
-        hit_per_page: 50
+        hit_per_page: 50,
+        offset_page: page
       }
       body = response.body
       Response.new(body)
