@@ -24,7 +24,20 @@ module Gurunavi
         range: 1,
         hit_per_page: 50
       }
-      response.body
+      body = response.body
+      Response.new(body)
+    end
+  end
+
+  class Response
+    attr_reader :body
+
+    def initialize(body)
+      @body = body
+    end
+
+    def error?
+      @body["gurunavi"] && @body["gurunavi"][0] && @body["gurunavi"][0].has_key?("error")
     end
   end
 end

@@ -5,11 +5,12 @@ class Restaurant
 
   class << self
     def parse_from_gurunavi_response(response)
-      count = response["response"]["hit_per_page"]
+      body = response.body
+      count = body["response"]["hit_per_page"]
       restaurants = []
       0.upto(count-1) do |i|
         params = {}
-        restaurant = response["response"][i.to_s]
+        restaurant = body["response"][i.to_s]
         photo = restaurant["photo"]
         params[:id] = photo["shop_id"]
         params[:distance] = photo["distance"]
